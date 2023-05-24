@@ -10,7 +10,7 @@ name: CI build
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "development" ]
 
 jobs:
   build:
@@ -41,3 +41,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=12Ashish1234_gitactions-tutorial
+
+# OWASP ZAP scanning
+
+    - name: Start your service
+      run: mvn spring-boot:run &
+
+    - name: ZAP Scan
+      uses: zaproxy/action-full-scan@v0.4.0
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        target: 'http://localhost:8085'
