@@ -10,7 +10,7 @@ name: CI build
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "development" ]
 
 jobs:
   build:
@@ -24,20 +24,11 @@ jobs:
       with:
         java-version: '17'
         distribution: 'zulu' # Alternative distribution options are available.
-    - name: Cache SonarCloud packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Build and analyze
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=12Ashish1234_gitactions-tutorial
+        cache: maven
+
+# Jfrog artifactory
+    - name: Login to Jfrog, Build, tag and push
+      run: |
+          docker login -u ${{ secrets.JFROG_REGISTRY_USERNAME }} -p ${{ secrets.JFROG_REGISTRY_PASSWORD}} a0mb6i6yarojf.jfrog.io
+          docker build . -t a0mb6i6yarojf.jfrog.io/gitaction-tutorial/first-github-app:${{ github.run_number }}
+          docker push a0mb6i6yarojf.jfrog.io/gitaction-tutorial/first-github-app:${{ github.run_number }}
