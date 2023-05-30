@@ -32,3 +32,4 @@ jobs:
           docker login -u ${{ secrets.JFROG_REGISTRY_USERNAME }} -p ${{ secrets.JFROG_REGISTRY_PASSWORD}} a0mb6i6yarojf.jfrog.io
           docker build . -t a0mb6i6yarojf.jfrog.io/gitaction-tutorial/first-github-app:${{ github.run_number }}
           docker push a0mb6i6yarojf.jfrog.io/gitaction-tutorial/first-github-app:${{ github.run_number }}
+
